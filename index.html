@@ -80,7 +80,7 @@
       }
       .row {
         display: grid;
-        grid-template-columns: 70px 1fr;
+        grid-template-columns: 90px 1fr;
         gap: 0.4rem;
         margin-bottom: 0.3rem;
       }
@@ -90,6 +90,7 @@
       input {
         width: 100%;
         padding: 0.2rem;
+        box-sizing: border-box;
       }
       .correct {
         background: #c8f7c5;
@@ -404,7 +405,7 @@
         left.appendChild(de);
         left.appendChild(counter);
         const btnToggle = document.createElement("button");
-        btnToggle.textContent = "Formen öffnen";
+        btnToggle.textContent = "Üben";
         header.appendChild(left);
         header.appendChild(btnToggle);
         div.appendChild(header);
@@ -498,8 +499,9 @@
 
         // Toggle Event
         btnToggle.addEventListener("click", () => {
-          forms.style.display =
-            forms.style.display === "block" ? "none" : "block";
+          const isOpen = forms.style.display === "block";
+          forms.style.display = isOpen ? "none" : "block";
+          btnToggle.textContent = isOpen ? "Üben" : "Schließen";
         });
       });
     </script>
