@@ -134,6 +134,10 @@
       Glückwunsch! Alle Verben korrekt gelernt.
     </div>
 
+    <div style="margin: 0.5rem 0 1rem 0;">
+      <button id="reset-counters">Alle Counter zuruecksetzen</button>
+    </div>
+
     <div id="app"></div>
 
     <script>
@@ -401,6 +405,16 @@
 
       // --- App Container ---
       const app = document.getElementById("app");
+      const resetAll = document.getElementById("reset-counters");
+
+      if (resetAll) {
+        resetAll.addEventListener("click", () => {
+          verbs.forEach((v) => localStorage.removeItem("err_" + v.id));
+          document.querySelectorAll(".counter").forEach((c) => {
+            c.textContent = "Fehler: 0";
+          });
+        });
+      }
 
       verbs.forEach((v) => {
         const div = document.createElement("div");
