@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const repoName = process.env.NEXT_PUBLIC_BASE_PATH || "";
-const basePath = repoName ? `/${repoName.replace(/^\\//, "")}` : "";
+// Entfernt ein führendes Slash, damit basePath wie "Trainer" wird
+const basePath = repoName ? `/${repoName.replace(/^\//, "")}` : "";
 
 const nextConfig = {
   output: "export",
