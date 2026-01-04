@@ -30,31 +30,31 @@
       }
       /* App Grid */
       #app {
-        display: grid;
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-wrap: wrap;
         gap: 1rem;
       }
 
       /* Einzelnes Verb */
       .verb {
+        flex: 1 1 300px;
         border: 1px solid #ccc;
         border-radius: 6px;
         padding: 0.6rem;
         background: #fff;
-        position: relative;
       }
 
       /* Tablet */
       @media (min-width: 700px) {
         #app {
-          grid-template-columns: repeat(2, 1fr);
+          /* flex-wrap handles it */
         }
       }
 
       /* Desktop */
       @media (min-width: 1100px) {
         #app {
-          grid-template-columns: repeat(3, 1fr);
+          /* flex-wrap handles it */
         }
       }
 
@@ -78,22 +78,8 @@
       .forms {
         display: none;
         margin-top: 0.5rem;
-      }
-
-      @media (min-width: 700px) {
-        .forms {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          z-index: 10;
-          max-height: 50vh;
-          overflow-y: auto;
-          margin-top: 0;
-        }
+        max-height: 70vh;
+        overflow-y: auto;
       }
       .row {
         display: grid;
