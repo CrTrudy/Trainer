@@ -524,8 +524,8 @@
               document.getElementById("err_" + v.id).textContent =
                 "Fehler: " + getErrors(v.id);
             } else {
+              div.classList.add("completed");
               completedCount++;
-              div.style.display = "none";
               if (completedCount === verbs.length) {
                 document.getElementById('congrats').style.display = 'block';
                 setTimeout(() => location.reload(), 3000);
@@ -564,6 +564,9 @@
           const isOpen = forms.style.display === "block";
           forms.style.display = isOpen ? "none" : "block";
           btnToggle.textContent = isOpen ? "Üben" : "Schließen";
+          if (isOpen && div.classList.contains("completed")) {
+            div.style.display = "none";
+          }
         });
       });
     </script>
