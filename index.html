@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Russische Verben – Trainer Set 1</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+      }
+      .verb {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        padding: 0.6rem;
+      }
+      @media (min-width: 1100px) {
+        .verb {
+          font-size: 0.95rem;
+        }
+      }
+      .forms {
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+      /* App Grid */
+      #app {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      /* Einzelnes Verb */
+      .verb {
+        flex: 1 1 300px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 0.6rem;
+        background: #fff;
+      }
+
+      /* Tablet */
+      @media (min-width: 700px) {
+        #app {
+          /* flex-wrap handles it */
+        }
+      }
+
+      /* Desktop */
+      @media (min-width: 1100px) {
+        #app {
+          /* flex-wrap handles it */
+        }
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ru {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+      .de {
+        color: #444;
+      }
+      button {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      .forms {
+        display: none;
+        margin-top: 0.5rem;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 90px 1fr;
+        gap: 0.4rem;
+        margin-bottom: 0.3rem;
+      }
+      label {
+        text-align: right;
+      }
+      input {
+        width: 100%;
+        padding: 0.2rem;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+      .correct {
+        background: #c8f7c5;
+      }
+      .wrong {
+        background: #f7c5c5;
+      }
+      .correction {
+        background: #f7c5c5;
+        border: 1px solid #ccc;
+        padding: 0.2rem;
+        font-family: inherit;
+        font-size: inherit;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .note {
+        font-size: 0.75rem;
+        color: #666;
+        margin-bottom: 0.4rem;
+      }
+      .counter {
+        font-size: 0.75rem;
+        color: #900;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Russische Alltagsverben – Set 1 (30)</h1>
+    <p class="note">
+      Erst Grundform → dann Formen öffnen → eingeben → überprüfen.<br />
+      Fehler werden pro Verb gespeichert.<br />
+    </p>
+
+    <div id="congrats" style="display: none; text-align: center; font-size: 1.5rem; margin: 2rem 0;">
+      Glückwunsch! Alle Verben korrekt gelernt.
+    </div>
+
+    <div style="margin: 0.5rem 0 1rem 0;">
+      <button id="reset-counters">Alle Counter zuruecksetzen</button>
+    </div>
+
+    <div id="app"></div>
+
+    <script>
+      // --- Verben ---
+      let completedCount = 0;
+      const verbs = [
+        {
+          id: "byt",
+          ru: "быть",
+          de: "sein",
+          note: "⚠ Präsens wird weggelassen (Я студент).",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["был", "была", "было", "были"],
+        },
+        {
+          id: "moch",
+          ru: "мочь",
+          de: "können",
+          pres: ["могу", "можешь", "может", "можем", "можете", "могут"],
+          past: ["мог", "могла", "могло", "могли"],
+        },
+        {
+          id: "hotet",
+          ru: "хотеть",
+          de: "wollen",
+          pres: ["хочу", "хочешь", "хочет", "хотим", "хотите", "хотят"],
+          past: ["хотел", "хотела", "хотело", "хотели"],
+        },
+        {
+          id: "idti",
+          ru: "идти",
+          de: "gehen (jetzt)",
+          pres: ["иду", "идёшь", "идёт", "идём", "идёте", "идут"],
+          past: ["шёл", "шла", "шло", "шли"],
+        },
+        {
+          id: "poyti",
+          ru: "пойти",
+          de: "losgehen",
+          note: "⚠ perfektiv, kein Präsens",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["пошёл", "пошла", "пошло", "пошли"],
+        },
+        {
+          id: "delat",
+          ru: "делать",
+          de: "machen",
+          pres: ["делаю", "делаешь", "делает", "делаем", "делаете", "делают"],
+          past: ["делал", "делала", "делало", "делали"],
+        },
+        {
+          id: "sdelat",
+          ru: "сделать",
+          de: "machen (fertig)",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["сделал", "сделала", "сделало", "сделали"],
+        },
+        {
+          id: "govorit",
+          ru: "говорить",
+          de: "sprechen",
+          pres: [
+            "говорю",
+            "говоришь",
+            "говорит",
+            "говорим",
+            "говорите",
+            "говорят",
+          ],
+          past: ["говорил", "говорила", "говорило", "говорили"],
+        },
+        {
+          id: "skazat",
+          ru: "сказать",
+          de: "sagen",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["сказал", "сказала", "сказало", "сказали"],
+        },
+        {
+          id: "znat",
+          ru: "знать",
+          de: "wissen / kennen",
+          pres: ["знаю", "знаешь", "знает", "знаем", "знаете", "знают"],
+          past: ["знал", "знала", "знало", "знали"],
+        },
+        {
+          id: "videt",
+          ru: "видеть",
+          de: "sehen",
+          pres: ["вижу", "видишь", "видит", "видим", "видите", "видят"],
+          past: ["видел", "видела", "видело", "видели"],
+        },
+        {
+          id: "dumat",
+          ru: "думать",
+          de: "denken",
+          pres: ["думаю", "думаешь", "думает", "думаем", "думаете", "думают"],
+          past: ["думал", "думала", "думало", "думали"],
+        },
+        {
+          id: "brat",
+          ru: "брать",
+          de: "nehmen",
+          pres: ["беру", "берёшь", "берёт", "берём", "берёте", "берут"],
+          past: ["брал", "брала", "брало", "брали"],
+        },
+        {
+          id: "vzyat",
+          ru: "взять",
+          de: "nehmen",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["взял", "взяла", "взяло", "взяли"],
+        },
+        {
+          id: "dat",
+          ru: "дать",
+          de: "geben",
+          note: "⚠ unregelmäßig",
+          pres: ["дам", "дашь", "даст", "дадим", "дадите", "дадут"],
+          past: ["дал", "дала", "дало", "дали"],
+        },
+        {
+          id: "zhdat",
+          ru: "ждать",
+          de: "warten",
+          pres: ["жду", "ждёшь", "ждёт", "ждём", "ждёте", "ждут"],
+          past: ["ждал", "ждала", "ждало", "ждали"],
+        },
+        {
+          id: "priyti",
+          ru: "прийти",
+          de: "ankommen",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["пришёл", "пришла", "пришло", "пришли"],
+        },
+        {
+          id: "uyti",
+          ru: "уйти",
+          de: "weggehen",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["ушёл", "ушла", "ушло", "ушли"],
+        },
+        {
+          id: "prihodit",
+          ru: "приходить",
+          de: "kommen",
+          pres: [
+            "прихожу",
+            "приходишь",
+            "приходит",
+            "приходим",
+            "приходите",
+            "приходят",
+          ],
+          past: ["приходил", "приходила", "приходило", "приходили"],
+        },
+        {
+          id: "spat",
+          ru: "спать",
+          de: "schlafen",
+          pres: ["сплю", "спишь", "спит", "спим", "спите", "спят"],
+          past: ["спал", "спала", "спало", "спали"],
+        },
+        {
+          id: "est",
+          ru: "есть",
+          de: "essen / es gibt",
+          note: "⚠ zwei Bedeutungen",
+          pres: ["ем", "ешь", "ест", "едим", "едите", "едят"],
+          past: ["ел", "ела", "ело", "ели"],
+        },
+        {
+          id: "rab",
+          ru: "работать",
+          de: "arbeiten",
+          pres: [
+            "работаю",
+            "работаешь",
+            "работает",
+            "работаем",
+            "работаете",
+            "работают",
+          ],
+          past: ["работал", "работала", "работало", "работали"],
+        },
+        {
+          id: "smotret",
+          ru: "смотреть",
+          de: "anschauen",
+          pres: [
+            "смотрю",
+            "смотришь",
+            "смотрит",
+            "смотрим",
+            "смотрите",
+            "смотрят",
+          ],
+          past: ["смотрел", "смотрела", "смотрело", "смотрели"],
+        },
+        {
+          id: "posmotret",
+          ru: "посмотреть",
+          de: "ansehen",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["посмотрел", "посмотрела", "посмотрело", "посмотрели"],
+        },
+        {
+          id: "slushat",
+          ru: "слушать",
+          de: "zuhören",
+          pres: [
+            "слушаю",
+            "слушаешь",
+            "слушает",
+            "слушаем",
+            "слушаете",
+            "слушают",
+          ],
+          past: ["слушал", "слушала", "слушало", "слушали"],
+        },
+        {
+          id: "ponimat",
+          ru: "понимать",
+          de: "verstehen",
+          pres: [
+            "понимаю",
+            "понимаешь",
+            "понимает",
+            "понимаем",
+            "понимаете",
+            "понимают",
+          ],
+          past: ["понимал", "понимала", "понимало", "понимали"],
+        },
+        {
+          id: "ponyat",
+          ru: "понять",
+          de: "verstehen",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["понял", "поняла", "поняло", "поняли"],
+        },
+        {
+          id: "pomoch",
+          ru: "помочь",
+          de: "helfen",
+          note: "⚠ perfektiv",
+          pres: ["—", "—", "—", "—", "—", "—"],
+          past: ["помог", "помогла", "помогло", "помогли"],
+        },
+      ];
+
+      // --- Fehler Speicher ---
+      function getErrors(id) {
+        return Number(localStorage.getItem("err_" + id)) || 0;
+      }
+      function addError(id) {
+        localStorage.setItem("err_" + id, getErrors(id) + 1);
+      }
+
+      // --- App Container ---
+      const app = document.getElementById("app");
+      const resetAll = document.getElementById("reset-counters");
+
+      if (resetAll) {
+        resetAll.addEventListener("click", () => {
+          verbs.forEach((v) => localStorage.removeItem("err_" + v.id));
+          document.querySelectorAll(".counter").forEach((c) => {
+            c.textContent = "Fehler: 0";
+          });
+        });
+      }
+
+      verbs.forEach((v) => {
+        const div = document.createElement("div");
+        div.className = "verb";
+
+        // Header
+        const header = document.createElement("div");
+        header.className = "header";
+        const left = document.createElement("div");
+        const ru = document.createElement("div");
+        ru.className = "ru";
+        ru.textContent = v.ru;
+        const de = document.createElement("div");
+        de.className = "de";
+        de.textContent = v.de;
+        const counter = document.createElement("div");
+        counter.className = "counter";
+        counter.id = "err_" + v.id;
+        counter.textContent = "Fehler: " + getErrors(v.id);
+        left.appendChild(ru);
+        left.appendChild(de);
+        left.appendChild(counter);
+        const btnToggle = document.createElement("button");
+        btnToggle.textContent = "Üben";
+        header.appendChild(left);
+        header.appendChild(btnToggle);
+        div.appendChild(header);
+
+        // Formen
+        const forms = document.createElement("div");
+        forms.className = "forms";
+        if (v.note) {
+          const note = document.createElement("div");
+          note.className = "note";
+          note.textContent = v.note;
+          forms.appendChild(note);
+        }
+
+        // Präsens
+        const presTitle = document.createElement("strong");
+        presTitle.textContent = "Präsens";
+        forms.appendChild(presTitle);
+        ["я", "ты", "он/она", "мы", "вы", "они"].forEach((p, i) => {
+          const row = document.createElement("div");
+          row.className = "row";
+          const label = document.createElement("label");
+          label.textContent = p;
+          const input = document.createElement("input");
+          input.setAttribute("data-sol", v.pres[i]);
+          input.setAttribute("lang", "ru");
+          input.setAttribute("inputmode", "text");
+          input.setAttribute("autocomplete", "off");
+          input.setAttribute("autocapitalize", "off");
+          if (v.pres[i] === "—") {
+            input.value = "—";
+            input.disabled = true;
+          }
+          row.appendChild(label);
+          row.appendChild(input);
+          forms.appendChild(row);
+        });
+
+        // Vergangenheit
+        const pastTitle = document.createElement("strong");
+        pastTitle.textContent = "Vergangenheit";
+        forms.appendChild(pastTitle);
+        ["м", "ж", "н", "мн"].forEach((p, i) => {
+          const row = document.createElement("div");
+          row.className = "row";
+          const label = document.createElement("label");
+          label.textContent = p;
+          const input = document.createElement("input");
+          input.setAttribute("data-sol", v.past[i]);
+          input.setAttribute("lang", "ru");
+          input.setAttribute("inputmode", "text");
+          input.setAttribute("autocomplete", "off");
+          input.setAttribute("autocapitalize", "off");
+          if (v.past[i] === "—") {
+            input.value = "—";
+            input.disabled = true;
+          }
+          row.appendChild(label);
+          row.appendChild(input);
+          forms.appendChild(row);
+        });
+
+        // Überprüfen Button
+        const btnCheck = document.createElement("button");
+        btnCheck.textContent = "Überprüfen";
+        btnCheck.addEventListener("click", () => {
+          if (btnCheck.textContent === "Überprüfen") {
+            let err = false;
+            forms.querySelectorAll("input").forEach((i) => {
+              if (i.dataset.sol === "—") {
+                return;
+              }
+              if (i.value.trim() === i.dataset.sol) {
+                i.className = "correct";
+              } else {
+                const correct = i.dataset.sol;
+                const userInput = i.value.trim();
+                const container = document.createElement('div');
+                container.className = 'correction';
+                container.dataset.sol = i.dataset.sol;
+                for (let j = 0; j < correct.length; j++) {
+                  const span = document.createElement('span');
+                  span.textContent = correct[j];
+                  if (userInput[j] && userInput[j] === correct[j]) {
+                    span.style.color = 'green';
+                  } else {
+                    span.style.color = 'red';
+                  }
+                  container.appendChild(span);
+                }
+                i.parentNode.replaceChild(container, i);
+                err = true;
+              }
+            });
+            if (err) {
+              addError(v.id);
+              document.getElementById("err_" + v.id).textContent =
+                "Fehler: " + getErrors(v.id);
+            } else {
+              div.classList.add("completed");
+              completedCount++;
+              if (completedCount === verbs.length) {
+                document.getElementById('congrats').style.display = 'block';
+                setTimeout(() => location.reload(), 3000);
+              }
+            }
+            btnCheck.textContent = "Leeren";
+          } else {
+            // Leeren
+            forms.querySelectorAll("input").forEach((i) => {
+              i.value = "";
+              i.className = "";
+            });
+            forms.querySelectorAll(".correction").forEach((c) => {
+              const input = document.createElement("input");
+              input.setAttribute("data-sol", c.dataset.sol);
+              input.setAttribute("lang", "ru");
+              input.setAttribute("inputmode", "text");
+              input.setAttribute("autocomplete", "off");
+              input.setAttribute("autocapitalize", "off");
+              if (c.dataset.sol === "—") {
+                input.value = "—";
+                input.disabled = true;
+              }
+              c.parentNode.replaceChild(input, c);
+            });
+            btnCheck.textContent = "Überprüfen";
+          }
+        });
+        forms.appendChild(btnCheck);
+
+        div.appendChild(forms);
+        app.appendChild(div);
+
+        // Toggle Event
+        btnToggle.addEventListener("click", () => {
+          const isOpen = forms.style.display === "block";
+          forms.style.display = isOpen ? "none" : "block";
+          btnToggle.textContent = isOpen ? "Üben" : "Schließen";
+          if (isOpen && div.classList.contains("completed")) {
+            div.style.display = "none";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
