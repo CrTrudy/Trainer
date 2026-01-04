@@ -78,16 +78,22 @@
       .forms {
         display: none;
         margin-top: 0.5rem;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        z-index: 10;
-        max-height: 50vh;
-        overflow-y: auto;
+      }
+
+      @media (min-width: 700px) {
+        .forms {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: #fff;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          z-index: 10;
+          max-height: 50vh;
+          overflow-y: auto;
+          margin-top: 0;
+        }
       }
       .row {
         display: grid;
