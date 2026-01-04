@@ -98,6 +98,16 @@
       .wrong {
         background: #f7c5c5;
       }
+      .correction {
+        background: #f7c5c5;
+        border: 1px solid #ccc;
+        padding: 0.2rem;
+        font-family: inherit;
+        font-size: inherit;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+      }
       .note {
         font-size: 0.75rem;
         color: #666;
@@ -480,9 +490,21 @@
             if (i.value.trim() === i.dataset.sol) {
               i.className = "correct";
             } else {
-              i.className = "wrong";
-              //Wert wird eingetragen----------------------------------------------------------
-              i.value = i.dataset.sol;
+              const correct = i.dataset.sol;
+              const userInput = i.value.trim();
+              const container = document.createElement('div');
+              container.className = 'correction';
+              for (let j = 0; j < correct.length; j++) {
+                const span = document.createElement('span');
+                span.textContent = correct[j];
+                if (userInput[j] && userInput[j] === correct[j]) {
+                  span.style.color = 'green';
+                } else {
+                  span.style.color = 'red';
+                }
+                container.appendChild(span);
+              }
+              i.parentNode.replaceChild(container, i);
               err = true;
             }
           });
