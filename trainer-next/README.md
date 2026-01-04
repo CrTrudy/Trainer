@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trainer Next (static export ready)
 
-## Getting Started
-
-First, run the development server:
-
+## Entwicklung
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## GitHub Pages / statischer Export
+1) Optional: Setze den Repo-Basis-Pfad (z. B. bei Repo `Trainer`):
+```bash
+set NEXT_PUBLIC_BASE_PATH=Trainer  # Windows PowerShell: $env:NEXT_PUBLIC_BASE_PATH="Trainer"
+```
+2) Export bauen:
+```bash
+npm run export
+```
+3) Der statische Output liegt im Ordner `out/`. Diesen Inhalt auf GitHub Pages bereitstellen (z. B. gh-pages Branch oder Pages aus `/docs`).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Wichtige Einstellungen
+- `next.config.mjs` ist auf `output: "export"` gestellt.
+- `basePath`/`assetPrefix` werden über `NEXT_PUBLIC_BASE_PATH` gesetzt, damit Assets auf GitHub Pages unter `/REPO-NAME/` gefunden werden.
