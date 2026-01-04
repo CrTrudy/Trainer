@@ -138,10 +138,13 @@
       Fehler werden pro Verb gespeichert.<br />
     </p>
 
-    <div id="app"></div>
+    <div id="congrats" style="display: none; text-align: center; font-size: 1.5rem; margin: 2rem 0;">
+      Glückwunsch! Alle Verben korrekt gelernt.
+    </div>
 
     <script>
       // --- Verben ---
+      let completedCount = 0;
       const verbs = [
         {
           id: "byt",
@@ -526,6 +529,13 @@
               addError(v.id);
               document.getElementById("err_" + v.id).textContent =
                 "Fehler: " + getErrors(v.id);
+            } else {
+              completedCount++;
+              div.style.display = "none";
+              if (completedCount === verbs.length) {
+                document.getElementById('congrats').style.display = 'block';
+                setTimeout(() => location.reload(), 3000);
+              }
             }
             btnCheck.textContent = "Leeren";
           } else {
