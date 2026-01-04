@@ -6,11 +6,9 @@ const basePath = repoName ? `/${repoName.replace(/^\//, "")}` : "";
 const nextConfig = {
   output: "export",
   trailingSlash: true,
-  assetPrefix: basePath || undefined,
-  basePath: basePath || undefined,
-  images: {
-    unoptimized: true,
-  },
+  basePath: process.env.NODE_ENV === "production" ? `/${repo}` : "",
+  assetPrefix: process.env.NODE_ENV === "production" ? `/${repo}/` : "",
+  images: { unoptimized: true },
 };
 
 export default nextConfig;
